@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "name": "ErpApp",
+      "path": "."
+    },
+    {
       "name": "Admin",
       "path": "./admin"
     },
