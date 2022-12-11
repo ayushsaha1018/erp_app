@@ -1,3 +1,4 @@
+import { AUTH_COOKIE } from "@config/keys";
 import Org from "@models/Org";
 import { Request, Response } from "express";
 
@@ -21,5 +22,6 @@ export const loginOrg = async (req: Request, res: Response) => {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
+  res.cookie(AUTH_COOKIE.name, org.issueToken(), AUTH_COOKIE.options);
   res.status(200).json(org);
 };

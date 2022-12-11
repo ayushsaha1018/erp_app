@@ -11,4 +11,5 @@ export interface IOrganization {
   password: string;
   salt?: string;
   verifyPassword(password: string): Promise<boolean>;
+  issueToken(): string;
 }

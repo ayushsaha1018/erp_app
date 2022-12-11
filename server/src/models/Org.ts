@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { IOrganization } from "types";
+import { JWT } from "@config/keys";
 
 const { Schema } = mongoose;
 
@@ -32,6 +34,20 @@ orgSchema.methods.verifyPassword = async function (password: string) {
   } catch (err) {
     return false;
   }
+};
+
+orgSchema.methods.issueToken = function () {
+  const payload = {
+    id: this._id,
+    name: this.namel,
+    email: this.email
+  };
+
+  const token = jwt.sign(payload, JWT.secret, {
+    expiresIn: JWT.expiresIn
+  });
+
+  return token;
 };
 
 export default mongoose.model("Org", orgSchema);
