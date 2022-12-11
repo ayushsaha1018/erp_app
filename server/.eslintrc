@@ -17,7 +17,6 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "prettier/prettier": "error",
     "object-curly-spacing": ["error", "always"],
     "node/no-missing-import": "off",
     "arrow-parens": "off",
@@ -31,7 +30,7 @@
     "no-process-exit": "off",
     "max-params": [1, 8],
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
     ]
   },

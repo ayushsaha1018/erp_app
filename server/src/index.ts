@@ -1,14 +1,14 @@
 import express from "express";
 import { PORT } from "@config/keys";
 import connectDB from "@config/db";
+import authRouter from "@routes/auth.routes";
 
 const app = express();
 connectDB();
 
-app.get("/", async (_req, res) => {
-  res.send("Hello World");
-});
+app.use(express.json());
+app.use("/auth", authRouter);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT} :)`);
+  console.log(`Server running on port ${PORT}`);
 });
