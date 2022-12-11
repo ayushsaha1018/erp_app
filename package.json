@@ -1,0 +1,29 @@
+{
+  "name": "erp_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd admin && npm run dev\" \"cd client && npm run dev\" \"cd server && npm run dev\"",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayushsaha1018/erp_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ayushsaha1018/erp_app/issues"
+  },
+  "homepage": "https://github.com/ayushsaha1018/erp_app#readme",
+  "devDependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "workspaces": [
+    "admin",
+    "client",
+    "server"
+  ]
+}
