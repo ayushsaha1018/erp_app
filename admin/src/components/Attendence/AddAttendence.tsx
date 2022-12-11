@@ -1,40 +1,45 @@
-import { TextInput, Checkbox, Button, Group, Box } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import {
+  Button,
+  Group,
+  Box,
+  Stack,
+  NumberInput,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { DatePicker } from "@mantine/dates";
 
 const AddAttendence = () => {
   const form = useForm({
     initialValues: {
-      email: '',
-      termsOfService: false,
-    },
-
-    validate: {
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+      studentRollNo: "",
+      date: "",
     },
   });
 
   return (
     <Box sx={{ maxWidth: 300 }} mx="auto">
       <form onSubmit={form.onSubmit((values) => console.log(values))}>
-        <TextInput
+        <NumberInput
           withAsterisk
-          label="Email"
-          placeholder="your@email.com"
-          {...form.getInputProps('email')}
+          mt="sm"
+          label="Student Roll No."
+          placeholder="123456"
+          {...form.getInputProps("studentRollNo")}
         />
 
-        <Checkbox
-          mt="md"
-          label="I agree to sell my privacy"
-          {...form.getInputProps('termsOfService', { type: 'checkbox' })}
+        <DatePicker
+          placeholder="Pick date"
+          label="Date"
+          withAsterisk
+          {...form.getInputProps("date")}
         />
 
         <Group position="right" mt="md">
-          <Button type="submit">Submit</Button>
+          <Button type="submit">Add</Button>
         </Group>
       </form>
     </Box>
   );
-}
+};
 
-export default AddAttendence
+export default AddAttendence;
