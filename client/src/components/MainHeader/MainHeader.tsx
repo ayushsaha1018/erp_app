@@ -78,7 +78,11 @@ const MainHeader = () => {
         <MantineLogo size={28} />
         <Group spacing={'xl'} className={classes.links}>
           <NavLink to="profile">
-            <Avatar src="avatar.png" alt="it's me" radius="xl" />
+            <Avatar
+              src="https://images.unsplash.com/photo-1603772655616-711c548d85f0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80"
+              alt="it's me"
+              radius="xl"
+            />
           </NavLink>
           <DarkThemeToggle />
         </Group>
