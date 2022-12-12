@@ -5,6 +5,7 @@ import { UserData } from './UserData';
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+    
   },
 
   avatar: {
@@ -42,7 +43,7 @@ const Profile = () => {
   ));
 
   return (
-    <Card withBorder p="xl" radius="md" className={classes.card}>
+    <Card withBorder p="xl" className={classes.card}>
       <Card.Section sx={{ backgroundImage: `url(${UserData.image})`, height: 200 }} />
       <Avatar src={UserData.avatar} size={200} radius={200} mx="auto" mt={-76} className={classes.avatar} />
       <Text align="center" size="lg" color= "teal" mt="sm" mb="xs">

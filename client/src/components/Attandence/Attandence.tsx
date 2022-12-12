@@ -1,4 +1,5 @@
 import { Container, RingProgress, Text } from '@mantine/core';
+import AttendenceChart from '../AttendenceChart/AttendenceChart';
 
 const Attandence = () => {
   return (
@@ -8,9 +9,10 @@ const Attandence = () => {
       sx={(theme) => ({
         width: 'fit-content',
         boxShadow: theme.shadows.md,
+        // overflow:'hidden'
       })}
     >
-      <RingProgress
+      {/* <RingProgress
         size={200}
         thickness={20}
         roundCaps
@@ -23,12 +25,13 @@ const Attandence = () => {
           //   { value: 60, color: 'cyan' },
           {
             value: 25,
-            color: 'grape',
+            color: 'green',
             tooltip: 'Attendence: 25% ',
           },
-          { value: 15, color: 'orange', tooltip: 'Absent:15%' },
+          { value: 15, color: 'red', tooltip: 'Absent:15%' },
         ]}
-      />
+      /> */}
+      <AttendenceChart />
     </Container>
   );
 };

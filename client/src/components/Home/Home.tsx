@@ -1,5 +1,6 @@
 import { AppShell, Navbar, Header } from '@mantine/core';
 import { Route, Routes } from 'react-router-dom';
+import Assignments from '../Assignments/Assignments';
 import Attandence from '../Attandence/Attandence';
 import HomeNavbar from '../HomeNavbar/HomeNavbar';
 import MainHeader from '../MainHeader/MainHeader';
@@ -9,7 +10,7 @@ import Profile from '../Profile/Profile';
 const Home = () => {
   return (
     <AppShell
-      padding="md"
+      // padding="md"
       navbar={<HomeNavbar />}
       header={<MainHeader />}
       styles={(theme) => ({
@@ -21,6 +22,7 @@ const Home = () => {
         <Route path="profile" element={<Profile />} />
         <Route path="/" element={<NoticeBoard />} />
         <Route path="attendence" element={<Attandence />} />
+        <Route path="assignments" element={<Assignments />} />
       </Routes>
     </AppShell>
   );
