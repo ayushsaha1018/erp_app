@@ -3,17 +3,26 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { IOrganization } from "types";
 import { JWT } from "@config/keys";
+import { mongoTransform } from "@utils/mongoTransform";
 
 const { Schema } = mongoose;
 
-const orgSchema = new Schema<IOrganization>({
-  name: { type: String, required: true, unique: true },
-  description: { type: String, required: true },
-  website: { type: String, required: true },
-  email: { type: String, required: true },
-  password: { type: String, required: true },
-  salt: { type: String }
-});
+const orgSchema = new Schema<IOrganization>(
+  {
+    name: { type: String, required: true, unique: true },
+    description: { type: String, required: true },
+    website: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    salt: { type: String }
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: mongoTransform
+    }
+  }
+);
 
 orgSchema.pre("save", async function (next) {
   if (this.isModified("password")) {

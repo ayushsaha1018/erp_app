@@ -1,13 +1,22 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import { mongoTransform } from "@utils/mongoTransform";
 
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  salt: { type: String }
-});
+const userSchema = new Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    salt: { type: String }
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: mongoTransform
+    }
+  }
+);
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
