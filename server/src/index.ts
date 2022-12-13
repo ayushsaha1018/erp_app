@@ -17,6 +17,11 @@ app.use(cookieParser());
 // Define routes
 app.use("/auth", authRouter);
 
+// 404
+app.use("*", (_req: Request, _res: Response) => {
+  throw new CustomError("Route not found", 404);
+});
+
 // Setup error handling
 app.use(
   (err: CustomError, _req: Request, res: Response, _next: NextFunction) => {
