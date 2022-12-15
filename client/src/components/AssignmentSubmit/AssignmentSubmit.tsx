@@ -1,19 +1,9 @@
 import { useState } from 'react';
-import { Modal, Button, Group } from '@mantine/core';
+import { Modal, Button, Group, Container } from '@mantine/core';
 
-const AssignmentSubmit = () => {
+const AssignmentSubmit = (id: any) => {
   const [opened, setOpened] = useState(false);
 
-  return (
-    <>
-      <Modal opened={opened} onClose={() => setOpened(false)} title="Introduce yourself!">
-        {/* Modal content */}
-      </Modal>
-
-      <Group position="center">
-        <Button onClick={() => setOpened(true)}>Open Modal</Button>
-      </Group>
-    </>
-  );
+  return <Container>Submit</Container>;
 };
 export default AssignmentSubmit;

@@ -1,9 +1,9 @@
 import { Accordion, ActionIcon, Badge, Box, Button, Checkbox, Grid, Group, Modal, TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconSearch, IconSubmarine } from '@tabler/icons';
-import dayjs from 'dayjs';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
+import AssignmentSubmit from '../AssignmentSubmit/AssignmentSubmit';
 import { data } from './AssignmentData';
 
 const PAGE_SIZE = 12;
@@ -65,7 +65,7 @@ const Assignments = () => {
         </Grid.Col>
       </Grid>
       <DataTable
-        //   rowBorderColor='teal'
+          // rowBorderColor='teal'
         // withBorder
         shadow="sm"
         highlightOnHover
@@ -77,14 +77,15 @@ const Assignments = () => {
         columns={[
           {
             accessor: 'name',
-            width: 'auto',
+            title: 'student Name',
+            width: '300px',
             render: ({ name, isNew }) => (
               <Group>
                 {name} {isNew && <Badge color="red">NEW</Badge>}{' '}
               </Group>
             ),
           },
-          { accessor: 'streetAddress', width: 'fit-content' },
+          { accessor: 'streetAddress', title: 'Class', textAlignment: 'center', width: 'fit-content' },
           { accessor: 'city' },
           {
             accessor: 'state',
@@ -96,7 +97,7 @@ const Assignments = () => {
               <>
                 <Modal
                   centered
-                  // overlayColor=""
+                  overlayColor="#0000001a"
                   // overlayBlur={1}
                   aria-modal="true"
                   closeButtonLabel="Close authentication modal"
@@ -104,8 +105,10 @@ const Assignments = () => {
                   size="lg"
                   opened={opened}
                   onClose={() => setOpened(false)}
-                  title="Introduce yourself!"
-                ></Modal>
+                  title="Submit-"
+                >
+                  <AssignmentSubmit id={id} />
+                </Modal>
                 <Button color="red" radius="xl" compact uppercase onClick={() => setOpened(true)}>
                   Submit
                 </Button>

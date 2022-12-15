@@ -13,7 +13,7 @@ import {
   IconHome2,
   IconUserPlus,
 } from '@tabler/icons';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 // import { MantineLogo } from '@mantine/ds';
 
 const useStyles = createStyles((theme, _params, getRef) => {
@@ -40,6 +40,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
       padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
       borderRadius: theme.radius.sm,
       fontWeight: 500,
+      cursor: 'pointer',
 
       '&:hover': {
         backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -58,6 +59,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     },
 
     linkActive: {
+      transform: 'scale(1.1)',
       '&, &:hover': {
         backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
         color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
@@ -70,7 +72,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 });
 
 const data = [
-  { link: 'home', label: 'Home', icon: IconHome2 },
+  { link: '', label: 'Home', icon: IconHome2 },
   { link: 'attendence', label: 'Attendence', icon: IconUserCheck },
   { link: 'schedule', label: 'Schedule', icon: IconCalendarStats },
   { link: 'fees', label: 'Fee Submission', icon: IconReceipt },
@@ -82,23 +84,25 @@ const data = [
 
 const HomeNavbar = () => {
   const { classes, cx } = useStyles();
-  const [active, setActive] = useState('Billing');
+  const [active, setActive] = useState('Home');
+  const navigate = useNavigate();
 
   const links = data.map((item) => {
     console.log(item.link);
     return (
-      <NavLink
+      <a
         className={cx(classes.link, { [classes.linkActive]: item.label === active })}
-        to={item.link}
+        // to={item.link}
         key={item.label}
         onClick={(event) => {
           event.preventDefault();
           setActive(item.label);
+          navigate(item.link);
         }}
       >
         <item.icon className={classes.linkIcon} stroke={1.5} />
         <span>{item.label}</span>
-      </NavLink>
+      </a>
     );
   });
 
