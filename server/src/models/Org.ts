@@ -1,7 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { IOrganization } from "types";
 import { JWT } from "@config/keys";
 import { mongoTransform } from "@utils/mongoTransform";
 
@@ -60,3 +59,5 @@ orgSchema.methods.issueToken = function () {
 };
 
 export default mongoose.model("Org", orgSchema);
+
+export type OrgDoc = Document & IOrganization;

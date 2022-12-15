@@ -1,4 +1,9 @@
-import { loginOrg, registerOrg } from "@controllers/auth.controller";
+import {
+  loginOrg,
+  registerOrg,
+  checkOrgAuth
+} from "@controllers/auth.controller";
+import { isOrgAuth } from "@middlewares/isOrgAuth";
 import { validate } from "@middlewares/validate";
 import { catchAsync } from "@utils/catchAsync";
 import express from "express";
@@ -12,5 +17,6 @@ authRouter.post(
   catchAsync(registerOrg)
 );
 authRouter.post("/org/login", validate(OrgLoginSchema), catchAsync(loginOrg));
+authRouter.get("/org", isOrgAuth, catchAsync(checkOrgAuth));
 
 export default authRouter;

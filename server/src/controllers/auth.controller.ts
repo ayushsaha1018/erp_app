@@ -1,6 +1,6 @@
-import { AUTH_COOKIE } from "@config/keys";
+import { ADMIN_AUTH_COOKIE } from "@config/keys";
 import Org from "@models/Org";
-import { CustomError } from "@utils/CustomError";
+import { ExpressError } from "@utils/ExpressError";
 import { ResponseWriter } from "@utils/ResponseWriter";
 import { Request, Response } from "express";
 
@@ -9,7 +9,7 @@ export const registerOrg = async (req: Request, res: Response) => {
   await org.save();
 
   const token = org.issueToken();
-  res.cookie(AUTH_COOKIE.name, token, AUTH_COOKIE.options);
+  res.cookie(ADMIN_AUTH_COOKIE.name, token, ADMIN_AUTH_COOKIE.options);
   ResponseWriter(res, 201, { id: org._id }, "Org created successfully");
 };
 
@@ -17,12 +17,22 @@ export const loginOrg = async (req: Request, res: Response) => {
   const { name, password } = req.body;
   const org = await Org.findOne({ name });
 
-  if (!org) throw new CustomError("Org not found", 404);
+  if (!org) throw new ExpressError("Org not found", 404);
 
   const isMatch = await org.verifyPassword(password);
 
-  if (!isMatch) throw new CustomError("Invalid credentials", 401);
-  res.cookie(AUTH_COOKIE.name, org.issueToken(), AUTH_COOKIE.options);
+  if (!isMatch) throw new ExpressError("Invalid credentials", 401);
+  res.cookie(
+    ADMIN_AUTH_COOKIE.name,
+    org.issueToken(),
+    ADMIN_AUTH_COOKIE.options
+  );
 
   ResponseWriter(res, 200, org, "Org logged in successfully");
+};
+
+export const checkOrgAuth = async (req: Request, res: Response) => {
+  const org = req.org || {};
+
+  ResponseWriter(res, 200, org, "You are logged in!");
 };

@@ -1,45 +1,27 @@
-import express, { NextFunction, Request, Response } from "express";
-import cookieParser from "cookie-parser";
+import express from "express";
 
 import { PORT } from "@config/keys";
 import connectDB from "@config/db";
 import authRouter from "@routes/auth.routes";
-import { CustomError } from "@utils/CustomError";
+import { ErrorHandler, NotFoundHandler } from "@controllers/error.controller";
+import { setupMiddlewares } from "@middlewares/express-setup";
 
 const app = express();
+
+// Connect to database
 connectDB();
 
 // Setup Middlewares
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+setupMiddlewares(app);
 
 // Define routes
 app.use("/auth", authRouter);
 
 // 404
-app.use("*", (_req: Request, _res: Response) => {
-  throw new CustomError("Route not found", 404);
-});
+app.use(NotFoundHandler);
 
 // Setup error handling
-app.use(
-  (err: CustomError, _req: Request, res: Response, _next: NextFunction) => {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-
-    const { statusCode, message, error } = err;
-
-    res.status(statusCode).json({
-      success: false,
-      message,
-      data: {
-        error
-      }
-    });
-  }
-);
+app.use(ErrorHandler);
 
 // Start server
 app.listen(PORT, () => {
