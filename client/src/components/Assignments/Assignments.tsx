@@ -1,6 +1,18 @@
-import { Accordion, ActionIcon, Badge, Box, Button, Checkbox, Grid, Group, Modal, TextInput } from '@mantine/core';
+import {
+  Badge,
+  Box,
+  Button,
+  createStyles,
+  Grid,
+  Group,
+  Modal,
+  Radio,
+  TextInput,
+  Tooltip,
+  useMantineTheme,
+} from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconSearch, IconSubmarine } from '@tabler/icons';
+import { IconCircleCheck, IconCircleX, IconClockRecord, IconSearch } from '@tabler/icons';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 import AssignmentSubmit from '../AssignmentSubmit/AssignmentSubmit';
@@ -8,127 +20,202 @@ import { data } from './AssignmentData';
 
 const PAGE_SIZE = 12;
 
-const Assignments = () => {
-  const [page, setPage] = useState(1);
+const useStyles = createStyles((theme: any) => {
+  return {
+    cell: { backgroundColor: theme.colors.red[2] },
+    viewButton: {
+      backgroundColor: theme.colors.blue[2],
+    },
+    linkStyle: {
+      color: '#fff',
+    },
+  };
+});
 
-  const [records, setRecords] = useState(data.slice(0, PAGE_SIZE));
-  const [pageRecords, setpageRecords] = useState(records);
+const Assignments = () => {
+  const theme = useMantineTheme();
+  const [page, setPage] = useState(1);
+  const { classes } = useStyles();
+  const [records, setRecords] = useState(data);
+  const [pageRecords, setpageRecords] = useState(records.slice(0, PAGE_SIZE));
   const [opened, setOpened] = useState(false);
   const [query, setQuery] = useState('');
-  const [veteransOnly, setVeteransOnly] = useState(false);
   const [debouncedQuery] = useDebouncedValue(query, 200);
+  const [filterBy, setFilterBy] = useState('all');
 
   useEffect(() => {
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE;
-    setRecords(data.slice(from, to));
+    setpageRecords(data.slice(from, to));
   }, [page]);
 
   useEffect(() => {
-    setRecords(
-      records.filter(({ name, city, state, streetAddress, isNew }) => {
-        if (veteransOnly && isNew) {
-          return false;
-        }
+    setpageRecords(
+      records.filter(({ assignee, subject, title }) => {
         if (
           debouncedQuery !== '' &&
-          !`${name} ${city} ${state} ${streetAddress}`.toLowerCase().includes(debouncedQuery.trim().toLowerCase())
+          !`${assignee} ${subject} ${title} `.toLowerCase().includes(debouncedQuery.trim().toLowerCase())
         ) {
           return false;
         }
         return true;
       }),
     );
-  }, [debouncedQuery, veteransOnly]);
+  }, [debouncedQuery]);
 
   const submitHandler = (id: string) => {};
 
+  useEffect(() => {
+    setpageRecords(
+      records.filter(({ status }) => {
+        if (filterBy !== 'all') return status === filterBy;
+        else return status;
+      }),
+    );
+  }, [filterBy]);
+
+  const submissionJSX = (data: any) => (
+    <>
+      <Modal
+        centered
+        overlayColor="#0000001a"
+        aria-modal="true"
+        closeButtonLabel="Close authentication modal"
+        opened={opened}
+        onClose={() => setOpened(false)}
+      >
+        <AssignmentSubmit data={data} setClose={closeModalHandler} />
+      </Modal>
+      <Button
+        disabled={data.status === 'done'}
+        color="red"
+        radius="xl"
+        compact
+        uppercase
+        onClick={() => setOpened(true)}
+      >
+        {data.status === 'done' ? 'Done' : 'Submit'}
+      </Button>
+    </>
+  );
+
+  const statusHandler = (status: String) => {
+    if (status === 'done') return <IconCircleCheck color={theme.colors.teal[3]} />;
+    else if (status === 'pending') return <IconClockRecord color={theme.colors.blue[7]} />;
+    else
+      return (
+        <Tooltip label="Late">
+          <IconCircleX color="red" />
+        </Tooltip>
+      );
+  };
+
+  const closeModalHandler = () => {
+    setOpened(false);
+  };
+
   return (
     <Box sx={{ height: 607 }}>
-      <Grid align="center" mb="md">
-        <Grid.Col xs={8} sm={9}>
+      <Grid align="center" justify="space-between" mb="md">
+        <Grid.Col xs={8} sm={5}>
           <TextInput
-            sx={{ flexBasis: '60%' }}
+            sx={{ flexBasis: '40%' }}
             placeholder="Search Assignments..."
             icon={<IconSearch size={16} />}
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
         </Grid.Col>
-        <Grid.Col xs={4} sm={3}>
-          <Checkbox
-            size="md"
-            label="Pending"
-            checked={veteransOnly}
-            onChange={(e) => setVeteransOnly(e.currentTarget.checked)}
-          />
+        <Grid.Col xs={10} sm={4}>
+          <Radio.Group value={filterBy} onChange={setFilterBy} name="favoriteFramework" description="Filter by">
+            <Radio value="all" label="All" />
+            <Radio value="done" label="Submitted" />
+            <Radio value="pending" label="Pending" />
+            <Radio value="late" label="Late" />
+            {/* <Radio value="vue" label="Vue" /> */}
+          </Radio.Group>
         </Grid.Col>
       </Grid>
       <DataTable
-          // rowBorderColor='teal'
-        // withBorder
         shadow="sm"
         highlightOnHover
+        withBorder={false}
         horizontalSpacing="xs"
         verticalSpacing="xs"
-        verticalAlignment="center"
-        // withColumnBorders
         records={pageRecords}
         columns={[
           {
-            accessor: 'name',
-            title: 'student Name',
-            width: '300px',
-            render: ({ name, isNew }) => (
+            accessor: 'title',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+            title: 'Title',
+            width: 'fit-content',
+            render: ({ title, isNew }) => (
               <Group>
-                {name} {isNew && <Badge color="red">NEW</Badge>}{' '}
+                {title} {isNew && <Badge color="red">NEW</Badge>}{' '}
               </Group>
             ),
           },
-          { accessor: 'streetAddress', title: 'Class', textAlignment: 'center', width: 'fit-content' },
-          { accessor: 'city' },
           {
-            accessor: 'state',
-            textAlignment: 'right',
+            accessor: 'subject',
+            title: 'Subject',
+            textAlignment: 'left',
+            width: 'fit-content',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
           },
           {
-            accessor: 'Submit',
-            render: ({ id }) => (
-              <>
-                <Modal
-                  centered
-                  overlayColor="#0000001a"
-                  // overlayBlur={1}
-                  aria-modal="true"
-                  closeButtonLabel="Close authentication modal"
-                  overlayOpacity={5}
-                  size="lg"
-                  opened={opened}
-                  onClose={() => setOpened(false)}
-                  title="Submit-"
-                >
-                  <AssignmentSubmit id={id} />
-                </Modal>
-                <Button color="red" radius="xl" compact uppercase onClick={() => setOpened(true)}>
-                  Submit
-                </Button>
-              </>
+            accessor: 'assignee',
+            title: 'Assignee',
+            textAlignment: 'left',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+          },
+          {
+            accessor: 'assigned_date',
+            title: 'Assigned Date',
+            sortable: true,
+            textAlignment: 'left',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+          },
+          {
+            accessor: 'submission_date',
+            title: 'Submission By',
+            sortable: true,
+            textAlignment: 'left',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+          },
+          {
+            accessor: 'status',
+            title: 'Status',
+            textAlignment: 'left',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+            render: ({ status }) => {
+              return statusHandler(status);
+            },
+          },
+          {
+            accessor: 'File',
+
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+            render: (data) => (
+              <Button className={classes.viewButton} radius="xl" uppercase formTarget="_blank" compact>
+                <a className={classes.linkStyle} target="_blank" href="https://files.eric.ed.gov/fulltext/ED491517.pdf">
+                  VIEW
+                </a>
+              </Button>
             ),
+          },
+          {
+            accessor: '',
+            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
+            render: (data) => submissionJSX(data),
           },
         ]}
         totalRecords={data.length}
-        recordsPerPage={PAGE_SIZE}
         page={page}
+        recordsPerPage={PAGE_SIZE}
         onPageChange={(p) => setPage(p)}
-        // uncomment the next line to use a custom loading text
         loadingText="Loading..."
-        // uncomment the next line to display a custom text when no records were found
         noRecordsText="No records found"
-        // uncomment the next line to use a custom pagination text
-        // paginationText={({ from, to, totalRecords }) => `Records ${from} - ${to} of ${totalRecords}`}
-        // uncomment the next line to use a custom pagination color (see https://mantine.dev/theming/colors/)
         paginationColor="grape"
-        // uncomment the next line to use a custom pagination size
         paginationSize="md"
       />
     </Box>

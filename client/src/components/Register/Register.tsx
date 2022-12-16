@@ -105,7 +105,7 @@ const AuthenticationForm = (props: PaperProps) => {
             {type === 'register' ? 'Already have an account? Login' : "Don't have an account? Register"}
           </Anchor> */}
           <Checkbox label="Keep me logged in" mt="xl" size="md" />
-          <Button mt={10} type="submit">
+          <Button mt={10} type="submit" fullWidth>
             Login
           </Button>
           {/* </Group> */}

@@ -9,7 +9,7 @@ const DarkThemeToggle = () => {
     <ActionIcon
       size="xl"
       variant="outline"
-      sx={{ borderRadius: '50%' }}
+      // sx={{ borderRadius: '50%' }}
       color={dark ? 'yellow' : 'blue'}
       onClick={() => toggleColorScheme()}
       title="Toggle color scheme"
