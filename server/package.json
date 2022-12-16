@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
+    "gen": "ts-node src/seed/createCSVfile.ts",
     "pretty": "prettier --write \"./src/**/*.{ts,js}\"",
     "lint": "eslint \"**/*.{ts,tsx}\" --ignore-pattern node_modules/ --ignore-pattern dist/",
     "lint:fix": "eslint \"**/*.ts\" --ignore-pattern node_modules/ --ignore-pattern dist/ --fix"
@@ -17,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@faker-js/faker": "^6.0.0-alpha.5",
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",

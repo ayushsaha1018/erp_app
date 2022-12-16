@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Org from "@models/Org";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT } from "@config/keys";
+import { catchAsync } from "@utils/catchAsync";
 
 const verifyToken = async (token: string) => {
   try {
@@ -13,22 +14,20 @@ const verifyToken = async (token: string) => {
   }
 };
 
-export const adminJWTCookieParser = async (
-  req: Request,
-  _res: Response,
-  next: NextFunction
-) => {
-  if (req.org) {
-    return next();
-  }
-
-  const token = req.cookies["erp-app-admin-auth"];
-  if (token) {
-    const org = await verifyToken(token);
-    if (org) {
-      req.org = org;
+export const adminJWTCookieParser = catchAsync(
+  async (req: Request, _res: Response, next: NextFunction) => {
+    if (req.org) {
+      return next();
     }
-  }
 
-  next();
-};
+    const token = req.cookies["erp-app-admin-auth"];
+    if (token) {
+      const org = await verifyToken(token);
+      if (org) {
+        req.org = org;
+      }
+    }
+
+    next();
+  }
+);

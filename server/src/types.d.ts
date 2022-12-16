@@ -1,6 +1,8 @@
 type OrgDoc = import("@models/Org").OrgDoc;
 
 type AccountRow = {
+  firstName: string;
+  lastName?: string | null;
   email: string;
   password: string;
 };

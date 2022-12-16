@@ -1,9 +1,9 @@
+import { catchAsync } from "@utils/catchAsync";
 import { NextFunction, Request, Response } from "express";
 import z, { ZodError } from "zod";
 
-export const validate =
-  <T>(schema: z.ZodType<T>) =>
-  (req: Request, res: Response, next: NextFunction) => {
+export const validate = <T>(schema: z.ZodType<T>) =>
+  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = schema.parse(req.body);
       next();
@@ -17,4 +17,4 @@ export const validate =
         }
       });
     }
-  };
+  });

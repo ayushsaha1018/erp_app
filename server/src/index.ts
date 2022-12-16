@@ -5,6 +5,7 @@ import connectDB from "@config/db";
 import authRouter from "@routes/auth.routes";
 import { ErrorHandler, NotFoundHandler } from "@controllers/error.controller";
 import { setupMiddlewares } from "@middlewares/express-setup";
+import orgRouter from "@routes/org.routes";
 
 const app = express();
 
@@ -16,6 +17,7 @@ setupMiddlewares(app);
 
 // Define routes
 app.use("/auth", authRouter);
+app.use("/org", orgRouter);
 
 // 404
 app.use(NotFoundHandler);

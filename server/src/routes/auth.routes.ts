@@ -1,7 +1,8 @@
 import {
   loginOrg,
   registerOrg,
-  checkOrgAuth
+  checkOrgAuth,
+  logoutOrg
 } from "@controllers/auth.controller";
 import { isOrgAuth } from "@middlewares/isOrgAuth";
 import { validate } from "@middlewares/validate";
@@ -18,5 +19,6 @@ authRouter.post(
 );
 authRouter.post("/org/login", validate(OrgLoginSchema), catchAsync(loginOrg));
 authRouter.get("/org", isOrgAuth, catchAsync(checkOrgAuth));
+authRouter.get("/org/logout", isOrgAuth, catchAsync(logoutOrg));
 
 export default authRouter;

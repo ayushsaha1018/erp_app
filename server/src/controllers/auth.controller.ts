@@ -36,3 +36,8 @@ export const checkOrgAuth = async (req: Request, res: Response) => {
 
   ResponseWriter(res, 200, org, "You are logged in!");
 };
+
+export const logoutOrg = async (_req: Request, res: Response) => {
+  res.clearCookie(ADMIN_AUTH_COOKIE.name);
+  ResponseWriter(res, 200, {}, "Org logged out successfully");
+};
