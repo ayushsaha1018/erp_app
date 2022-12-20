@@ -6,6 +6,7 @@ import HomeNavbar from '../HomeNavbar/HomeNavbar';
 import MainHeader from '../MainHeader/MainHeader';
 import NoticeBoard from '../NoticeBoard/NoticeBoard';
 import Profile from '../Profile/Profile';
+import Settings from '../Settings/Settings';
 
 const Home = () => {
   return (
@@ -23,6 +24,7 @@ const Home = () => {
         <Route path="/" element={<NoticeBoard />} />
         <Route path="attendence" element={<Attandence />} />
         <Route path="assignments" element={<Assignments />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </AppShell>
   );

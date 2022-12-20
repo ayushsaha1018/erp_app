@@ -1,14 +1,20 @@
+import { createStyles } from '@mantine/core';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { data } from './AttendenceData';
+import { data } from '../AttendenceStats/AttendenceData';
+
+const useStyles = createStyles((theme) => ({
+  main: {
+    width: 800,
+    // 'overflow-x': 'scroll',
+  },
+}));
 
 const AttendenceChart = () => {
-  const tooltipContent = ({ active, payload }: any) => {
-    if (!active) return null;
-    console.log(payload[0].payload);
-  };
-
+  const { classes } = useStyles();
   return (
     <BarChart
+      // class
+      // layout="vertical"
       width={800}
       height={500}
       data={data}
@@ -19,12 +25,12 @@ const AttendenceChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="6 6" />
-      <XAxis dataKey="name" stroke="#008080" />
+      <XAxis dataKey="month" stroke="#008080" />
       <YAxis stroke="#008080" />
-      <Tooltip content={tooltipContent} />
+      <Tooltip />
       <Legend />
-      <Bar radius={5} dataKey="Present" fill="#fa5252" />
-      <Bar radius={5} dataKey="Absent" fill="#40c057" />
+      <Bar radius={5} dataKey="present" fill="#fa5252" />
+      <Bar radius={5} dataKey="absent" fill="#40c057" />
     </BarChart>
   );
 };
