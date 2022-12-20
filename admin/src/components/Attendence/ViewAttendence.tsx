@@ -13,7 +13,7 @@ import {
   Center,
   Container,
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { data } from "../../assets/attendenceData";
 
 const useStyles = createStyles((theme) => ({
@@ -33,14 +33,22 @@ export function ViewAttendence() {
   const [sectionValue, onSectionChange] = useState("");
   const [activePage, setPage] = useState(1);
 
-  const handleSort = () => {
-    setAttData(
-      data.filter(
-        (item) => item.class == classValue && item.section == sectionValue
-      )
-    );
-    console.log(attData);
+  const clearFilters = () => {
+    setAttData(data)
+    onClassChange("")
+    onSectionChange("")
   };
+
+  useEffect(() => {
+    if(classValue !== "" && sectionValue === "")
+        setAttData(data.filter((item) => item.class == classValue))
+    else if(classValue === "" && sectionValue !== "")     
+        setAttData(data.filter((item) => item.section == sectionValue))
+    else if(classValue != "" && sectionValue !== "")    
+        setAttData(data.filter((item) => item.section == sectionValue && item.class == classValue))
+  }, [classValue, sectionValue])
+  
+
   const rows = attData.map((row) => {
     const totalReviews = row.present + row.absent;
     const positiveReviews = (row.present / totalReviews) * 100;
@@ -118,9 +126,7 @@ export function ViewAttendence() {
           />
         </Grid.Col>
         <Grid.Col md={3}>
-          <Center>
-            <Button onClick={handleSort}>Search</Button>
-          </Center>
+            <Button mt={25} onClick={clearFilters}>Clear</Button>
         </Grid.Col>
       </Grid>
       <ScrollArea>
@@ -137,7 +143,7 @@ export function ViewAttendence() {
               </thead>
               <tbody>{rows}</tbody>
             </Table>
-            <Pagination page={activePage} onChange={setPage} total={10} />;
+            <Pagination page={activePage} onChange={setPage} total={5} />;
           </>
         ) : (
           <Button>No</Button>
