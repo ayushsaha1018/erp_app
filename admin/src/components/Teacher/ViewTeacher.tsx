@@ -7,54 +7,39 @@ import {
   Group,
   Modal,
   Radio,
+  Select,
   TextInput,
   Tooltip,
   useMantineTheme,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconCircleCheck, IconCircleX, IconClockRecord, IconSearch } from '@tabler/icons';
+import {  IconSearch } from '@tabler/icons';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
-// import AssignmentSubmit from '../AssignmentSubmit/AssignmentSubmit';
-import { data } from './AssignmentData';
-
-const PAGE_SIZE = 12;
-
-const useStyles = createStyles((theme: any) => {
-  return {
-    cell: { backgroundColor: theme.colors.red[2] },
-    viewButton: {
-      backgroundColor: theme.colors.blue[2],
-    },
-    linkStyle: {
-      color: '#fff',
-    },
-  };
-});
+import {data} from "../../assets/teacherDetails"
+const PAGE_SIZE = 11;
 
 export const ViewTeacher = () => {
-  const theme = useMantineTheme();
   const [page, setPage] = useState(1);
-  const { classes } = useStyles();
   const [records, setRecords] = useState(data);
   const [pageRecords, setpageRecords] = useState(records.slice(0, PAGE_SIZE));
   const [opened, setOpened] = useState(false);
   const [query, setQuery] = useState('');
   const [debouncedQuery] = useDebouncedValue(query, 200);
-  const [filterBy, setFilterBy] = useState('all');
+  const [subjectValue, onSubjectChange] = useState('All');
 
   useEffect(() => {
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE;
-    setpageRecords(data.slice(from, to));
+    setpageRecords(records.slice(from, to));
   }, [page]);
 
   useEffect(() => {
     setpageRecords(
-      records.filter(({ assignee, subject, title }) => {
+      records.filter(({ name, subject }) => {
         if (
           debouncedQuery !== '' &&
-          !`${assignee} ${subject} ${title} `.toLowerCase().includes(debouncedQuery.trim().toLowerCase())
+          !`${name} ${subject} `.toLowerCase().includes(debouncedQuery.trim().toLowerCase())
         ) {
           return false;
         }
@@ -63,77 +48,39 @@ export const ViewTeacher = () => {
     );
   }, [debouncedQuery]);
 
-  const submitHandler = (id: string) => {};
 
   useEffect(() => {
     setpageRecords(
-      records.filter(({ status }) => {
-        if (filterBy !== 'all') return status === filterBy;
-        else return status;
+      records.filter(({ subject }) => {
+        if (subjectValue !== 'All') return subject === subjectValue;
+        else return subject;
       }),
     );
-  }, [filterBy]);
+  }, [subjectValue]);
 
-  const submissionJSX = (data: any) => (
-    <>
-      <Modal
-        centered
-        overlayColor="#0000001a"
-        aria-modal="true"
-        closeButtonLabel="Close authentication modal"
-        opened={opened}
-        onClose={() => setOpened(false)}
-      >
-        {/* <AssignmentSubmit data={data} setClose={closeModalHandler} /> */}
-      </Modal>
-      <Button
-        disabled={data.status === 'done'}
-        color="red"
-        radius="xl"
-        compact
-        uppercase
-        onClick={() => setOpened(true)}
-      >
-        {data.status === 'done' ? 'Done' : 'Submit'}
-      </Button>
-    </>
-  );
-
-  const statusHandler = (status: String) => {
-    if (status === 'done') return <IconCircleCheck color={theme.colors.teal[3]} />;
-    else if (status === 'pending') return <IconClockRecord color={theme.colors.blue[7]} />;
-    else
-      return (
-        <Tooltip label="Late">
-          <IconCircleX color="red" />
-        </Tooltip>
-      );
-  };
-
-  const closeModalHandler = () => {
-    setOpened(false);
-  };
 
   return (
-    <Box sx={{ height: 607 }}>
+    <Box sx={{ height: 580 }}>
       <Grid align="center" justify="space-between" mb="md">
         <Grid.Col xs={8} sm={5}>
           <TextInput
             sx={{ flexBasis: '40%' }}
-            placeholder="Search Assignments..."
+            placeholder="Search Teachers..."
             icon={<IconSearch size={16} />}
             value={query}
             onChange={(e) => setQuery(e.currentTarget.value)}
           />
         </Grid.Col>
         <Grid.Col xs={10} sm={4}>
-          <Radio.Group value={filterBy} onChange={setFilterBy} name="favoriteFramework" description="Filter by">
-            <Radio value="all" label="All" />
-            <Radio value="done" label="Submitted" />
-            <Radio value="pending" label="Pending" />
-            <Radio value="late" label="Late" />
-            {/* <Radio value="vue" label="Vue" /> */}
-          </Radio.Group>
+        <Select
+            label="Select Section"
+            placeholder="Pick one"
+            searchable
+            onSearchChange={onSubjectChange}
+            searchValue={subjectValue || "All"}
+            nothingFound="No options"
+            data={["All", "English", "Hindi", "Geography","Mathematics", "Chemistry"]}
+          />
         </Grid.Col>
       </Grid>
       <DataTable
@@ -145,69 +92,15 @@ export const ViewTeacher = () => {
         records={pageRecords}
         columns={[
           {
-            accessor: 'title',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-            title: 'Title',
-            width: 'fit-content',
-            render: ({ title, isNew }) => (
-              <Group>
-                {title} {isNew && <Badge color="red">NEW</Badge>}{' '}
-              </Group>
-            ),
+            accessor: 'name',
+            title: 'Name'
           },
           {
             accessor: 'subject',
             title: 'Subject',
             textAlignment: 'left',
             width: 'fit-content',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-          },
-          {
-            accessor: 'assignee',
-            title: 'Assignee',
-            textAlignment: 'left',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-          },
-          {
-            accessor: 'assigned_date',
-            title: 'Assigned Date',
-            sortable: true,
-            textAlignment: 'left',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-          },
-          {
-            accessor: 'submission_date',
-            title: 'Submission By',
-            sortable: true,
-            textAlignment: 'left',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-          },
-          {
-            accessor: 'status',
-            title: 'Status',
-            textAlignment: 'left',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-            render: ({ status }) => {
-              return statusHandler(status);
-            },
-          },
-          {
-            accessor: 'File',
-
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-            render: (data) => (
-              <Button className={classes.viewButton} radius="xl" uppercase formTarget="_blank" compact>
-                <a className={classes.linkStyle} target="_blank" href="https://files.eric.ed.gov/fulltext/ED491517.pdf">
-                  VIEW
-                </a>
-              </Button>
-            ),
-          },
-          {
-            accessor: '',
-            cellsClassName: (record) => (record.status === 'late' ? classes.cell : ''),
-            render: (data) => submissionJSX(data),
-          },
+          }
         ]}
         totalRecords={data.length}
         page={page}
@@ -221,5 +114,3 @@ export const ViewTeacher = () => {
     </Box>
   );
 };
-
-// export default ViewTeacher;
