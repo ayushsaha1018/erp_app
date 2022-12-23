@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { CORS_REGEX } from "@config/keys";
-import { adminJWTCookieParser } from "./jwtAuth";
+import { adminJWTCookieParser, userJWTCookieParser } from "./jwtAuth";
 
 export const setupMiddlewares = (app: Application) => {
   app.use(
@@ -17,4 +17,5 @@ export const setupMiddlewares = (app: Application) => {
   app.use(express.urlencoded({ extended: true }));
   app.use(cookieParser());
   app.use(adminJWTCookieParser);
+  app.use(userJWTCookieParser);
 };

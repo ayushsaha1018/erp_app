@@ -18,3 +18,12 @@ export const ADMIN_AUTH_COOKIE = {
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 };
+
+export const CLIENT_AUTH_COOKIE = {
+  name: "erp-app-client-auth",
+  options: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+  }
+};

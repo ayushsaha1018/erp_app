@@ -33,15 +33,18 @@ const createCSVfile = (fileName: string) => {
   const filePath = path.join(__dirname, fileName);
   const writeStream = fs.createWriteStream(filePath);
 
-  writeStream.write("firstName,lastName,email,password\n");
+  writeStream.write("firstName,lastName,email,password,role\n");
 
   for (let i = 0; i < args.sampleSize; i++) {
     const firstName = faker.name.firstName();
     const lastName = faker.name.lastName();
     const email = faker.internet.email();
     const password = faker.internet.password();
+    const role = Math.random() > 0.8 ? "teacher" : "student";
 
-    writeStream.write(`${firstName},${lastName},${email},${password}\n`);
+    writeStream.write(
+      `${firstName},${lastName},${email},${password},${role}\n`
+    );
   }
 
   writeStream.end();

@@ -21,40 +21,60 @@ export const uploadData = async (
   const { file } = req;
 
   const data: AccountRow[] = [];
-
+  let i = 0;
+  let error = false;
   fs.createReadStream(file.path)
     .pipe(
       csvParser({
-        headers: ["firstName", "lastName", "email", "password"],
+        headers: ["firstName", "lastName", "email", "password", "role"],
         strict: true
       })
     )
     .on("data", (row: AccountRow) => {
       try {
+        if (i === 0) {
+          i++;
+          return;
+        }
+
         data.push(RegisterUserSchema.parse(row));
       } catch (e) {
+        error = true;
         next(new ExpressError("Invalid data file", 400));
       }
     })
     .on("end", async () => {
+      if (error) {
+        return;
+      }
+
       try {
         const txns: Promise<Document>[] = [];
-        for (let i = 1; i < data.length; i++) {
-          const { firstName, lastName, email, password } = data[i];
+        for (let i = 0; i < data.length; i++) {
+          const { firstName, lastName, email, password, role } = data[i];
           const user = new User({
             firstName,
             lastName,
             email,
             password,
+            role,
             org: req.org!._id
           });
 
-          txns.push(user.save());
+          // If email already occured before, skip
+          const skipOrNot = data
+            .slice(0, i)
+            .findIndex((row) => row.email === email);
+
+          if (skipOrNot === -1) {
+            txns.push(user.save());
+          }
         }
 
         await Promise.all(txns);
         ResponseWriter(res, 200, {}, "Successfully created user accounts!");
-      } catch (error) {
+      } catch (err) {
+        error = true;
         next(new ExpressError("Invalid data file", 400));
       } finally {
         // Delete the file after processing
@@ -63,6 +83,8 @@ export const uploadData = async (
     })
     .on("error", () => {
       fs.unlinkSync(file.path);
+      if (error) return;
+      error = true;
       next(new ExpressError("Invalid data file", 400));
     });
 };
